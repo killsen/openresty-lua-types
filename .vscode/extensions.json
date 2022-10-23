@@ -1,0 +1,7 @@
+{
+    "recommendations": [
+        "killsen.openresty-vsce",
+        "editorconfig.editorconfig",
+        "hangxingliu.vscode-nginx-conf-hint"
+    ]
+}

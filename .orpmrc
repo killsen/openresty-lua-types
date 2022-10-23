@@ -1,0 +1,14 @@
+{
+    "app_name":  "",
+    "openresty_ver":  "1.21.4.1",
+    "luarocks_ver":  "3.9.1",
+    "mingw_ver":  "12.2.0",
+    "arch":  "32bit",
+    "libs":  {
+                 "bungle/lua-resty-template":  "v2.0",
+                 "ledgetech/lua-resty-http":  "v0.16.1",
+                 "thibaultcha/lua-resty-mlcache":  "2.6.0",
+                 "hamishforbes/lua-resty-iputils":  "v0.3.0",
+                 "killsen/openresty-clib":  "v1.0.0"
+             }
+}
