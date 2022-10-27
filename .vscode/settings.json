@@ -6,6 +6,9 @@
         "**/CVS": true,
         "**/.DS_Store": true,
         "**/tmp": true,
+        // ".rocks": true,
+        // "lua_modules": true,
+        // "lua_types": true,
     },
 
     "files.associations": {
@@ -14,6 +17,15 @@
         ".orpmrc": "json",
         "*.api": "lua",
     },
+
+    "json.schemas": [
+        {
+            "url": "https://raw.githubusercontent.com/killsen/openresty-orpm/main/schema.json",
+            "fileMatch": [
+                ".orpmrc"
+            ]
+        }
+    ],
 
     "workbench.tree.indent": 22,
 
@@ -30,4 +42,10 @@
     "editor.useTabStops": true,
     "editor.multiCursorModifier": "ctrlCmd",
     "editor.snippetSuggestions": "top",
+
+    "editor.quickSuggestions": {
+        "other": "on",
+        "comments": "off",
+        "strings": "on"
+    }
 }
