@@ -1,4 +1,26 @@
 
+and                                         -- 保留字
+break                                       -- 保留字
+do                                          -- 保留字
+else                                        -- 保留字
+elseif                                      -- 保留字
+end                                         -- 保留字
+false                                       -- 保留字
+for                                         -- 保留字
+function                                    -- 保留字
+if                                          -- 保留字
+in                                          -- 保留字
+local                                       -- 保留字
+nil                                         -- 保留字
+not                                         -- 保留字
+or                                          -- 保留字
+repeat                                      -- 保留字
+return                                      -- 保留字
+then                                        -- 保留字
+true                                        -- 保留字
+until                                       -- 保留字
+while                                       -- 保留字
+
 ngx                                         -- ngx 库
 ndk                                         -- ndk 库
 coroutine                                   -- 协程库
