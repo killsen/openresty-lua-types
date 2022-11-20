@@ -1,0 +1,146 @@
+
+-- lua-resty-session
+-- a secure, and flexible session library for OpenResty.
+-- https://github.com/bungle/lua-resty-session
+
+local _T = {}
+local _M = { _VERSION = "3.10", types  = _T }
+local mt = { __index = _M }
+
+_T.CookieOption = { "// Cookie 选项",
+    path        = "string   ? // 路径: 默认根目录 /",
+    domain      = "string   ? // 域名: 默认不指定",
+    samesite    = "string   ? // 同站策略: 默认 Lax",
+    secure      = "boolean  ? // 开启安全模式: 默认自动",
+    httponly    = "boolean  ? // 只允许http访问: 默认 true 即 不允许 js 访问",
+    persistent  = "boolean  ? // 是否持久化: 默认 false 即 session",
+    discard     = "number   ? // 丢弃时间: 默认 10 秒",
+    renew       = "number   ? // 自动续期时间: 默认到期前 600 秒自动续期",
+    lifetime    = "number   ? // 有效期: 默认 3600 秒",
+    idletime    = "number   ? // 最大空闲连接时间: 默认 0 即 永久",
+    maxsize     = "number   ? // 最大长度: 默认 4000",
+}
+
+_T.CheckOption = { "// Check 选项",
+    ssi         = "boolean  ? // 是否检查 ssl session id: 默认 false",
+    ua          = "boolean  ? // 是否检查客户端代理(ua): 默认 true",
+    scheme      = "boolean  ? // 是否检查http(s)协议: 默认 true",
+    addr        = "boolean  ? // 是否检查客户端IP地址: 默认 false",
+}
+
+_T.SessionOption = { "// Session 选项",
+    name        = "string   ? // 名称: 默认 session",
+    secret      = "string     // 秘钥: 建议自定义",
+
+    identifier  = "string   ? // ID生成器: 默认 random",
+    strategy    = "string   ? // 安全策略: 默认 default",
+    storage     = "string   ? // 存储方式: 默认 cookie",
+    serializer  = "string   ? // 序列化器: 默认 json",
+    compressor  = "string   ? // 压缩方式: 默认 none",
+    encoder     = "string   ? // 编码方式: 默认 base64",
+    cipher      = "string   ? // 加密算法: 默认 aes",
+    hmac        = "string   ? // 哈希算法: 默认 sha1",
+
+    cookie      = "@CookieOption ? // Cookie 选项",
+    check       = "@CheckOption  ? // Check 选项",
+}
+
+_T.CookieInfo = { "// Cookie 信息",
+    id          = "sring    ? // 客户端ID",
+    expires     = "number   ? // 过期时间",
+    usebefore   = "number   ? // 到期时间",
+    data = { "//当前会话数据",
+        uid     = "string   ? // 用户编码",
+    },
+}
+
+_T.SessionInstance = { "// Session 实例",
+
+    id          = "sring    ? // 客户端ID",
+    now         = "number   ? // 当前时间",
+    expires     = "number   ? // 过期时间",
+    usebefore   = "number   ? // 到期时间",
+
+    data = { "//当前会话数据",
+        uid     = "string   ? // 用户编码",
+    },
+
+    present     = "boolean  ? // 是否由客户端提供",
+    opened      = "boolean  ? // 是否已打开",
+    started     = "boolean  ? // 是否已启动",
+    destroyed   = "boolean  ? // 是否已销毁",
+    closed      = "boolean  ? // 是否已关闭",
+
+    name        = "string   ? // cookie名称: 默认 session",
+    secret      = "string   ? // 哈希算法秘钥",
+    key         = "string   ? // 哈希算法密码: 根据 Check 选项自动生成",
+
+    cookie      = "@CookieOption ? // Cookie 选项",
+    check       = "@CheckOption  ? // Check 选项",
+
+--  identifier  = require "resty.session.identifiers.random",
+--  strategy    = require "resty.session.strategies.default",
+--  storage     = require "resty.session.storage.cookie".new(),
+--  serializer  = require "resty.session.serializers.json",
+--  compressor  = require "resty.session.compressors.none".new(),
+--  encoder     = require "resty.session.encoders.base64",
+--  cipher      = require "resty.session.ciphers.aes",
+--  hmac        = require "resty.session.hmac.sha1",
+}
+
+local function new_session(opts)
+-- @return : @SessionInstance
+end
+
+-- 创建 session 实例
+function _M.new(opts)  --@@
+-- @opts : @SessionOption   //Session选项
+    local sss = new_session(opts)
+    return setmetatable(sss, mt)
+end
+
+-- 开启 session
+function _M:start()
+    return self, self.present, reason
+end
+
+-- 打开 session
+function _M:open(keep_lock)
+    return self, self.present, reason
+end
+
+-- 销毁 session
+function _M:destroy()
+    return ok, err
+end
+
+-- 获取 cookie
+function _M:get_cookie()
+-- @return : string         // cookie字符串
+end
+
+-- 解析 cookie
+function _M:parse_cookie(cookie)
+-- @cookie : string         // cookie字符串
+-- @return : @CookieInfo    // cookie信息表
+end
+
+-- 重新生成 session
+function _M:regenerate(flush, close)
+    return ok, err
+end
+
+-- 保存 session
+function _M:save(close)
+end
+
+-- 关闭 session
+function _M:close()
+    return ok, err
+end
+
+-- 隐藏 session
+function _M:hide()
+end
+
+return _M
