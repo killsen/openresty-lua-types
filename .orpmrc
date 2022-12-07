@@ -1,5 +1,5 @@
 {
-    "version":  "0.0.4",
+    "version":  "0.0.5",
     "license":  "MIT",
     "homepage":  "https://github.com/killsen/openresty-lua-types",
     "app_name":  "",
@@ -8,7 +8,7 @@
     "mingw_ver":  "12.2.0",
     "arch":  "64bit",
     "libs":  {
-                 "killsen/openresty-clib":  "v1.0.1",
+                 "killsen/openresty-clib":  "master",
                  "bungle/lua-resty-prettycjson":  "v1.6",
                  "bungle/lua-resty-template":  "v2.0",
                  "thibaultcha/lua-resty-mlcache":  "2.6.0",
