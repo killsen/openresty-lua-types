@@ -1,5 +1,5 @@
 ﻿{
-    "version":  "0.0.6",
+    "version":  "1.0.0",
     "license":  "MIT",
     "homepage":  "https://github.com/killsen/openresty-lua-types",
     "app_name":  "",
@@ -11,16 +11,23 @@
 
              },
     "devs":  {
-                 "killsen/openresty-appx":  "v0.1.8",
+                 "killsen/openresty-appx":  "master",
                  "killsen/openresty-lua-types":  "#",
-                 "killsen/openresty-clib":  "v1.0.2",
+                 "killsen/openresty-clib":  "master",
+                 "killsen/lua-resty-ipdb-jit":  "v0.1.2",
+                 "guosiu/lua-resty-zlib":  "master",
+                 "guosiu/lua-resty-date":  "v2.2",
                  "bungle/lua-resty-prettycjson":  "v1.6",
                  "bungle/lua-resty-template":  "v2.0",
+                 "bungle/lua-resty-session":  "v3.10",
+                 "bungle/lua-resty-random":  "master",
                  "thibaultcha/lua-resty-mlcache":  "2.6.0",
                  "hamishforbes/lua-resty-iputils":  "v0.3.0",
                  "ledgetech/lua-resty-http":  "v0.16.1",
-                 "guosiu/lua-resty-date":  "v2.2",
                  "agentzh/lua-resty-multipart-parser":  "master",
-                 "golgote/lua-resty-info":  "master"
+                 "golgote/lua-resty-info":  "master",
+                 "fffonion/lua-resty-acme":  "0.10.1",
+                 "fffonion/lua-resty-openssl":  "0.8.15",
+                 "openresty/lua-resty-balancer":  "v0.04"
              }
 }
