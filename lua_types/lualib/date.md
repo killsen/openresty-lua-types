@@ -1,21 +1,97 @@
 # date
 
-## date.new(...)
-* date.new(num_time): 传入时间戳
-* date.new(tbl_date)：传入对象表达式
-* date.new(str_date)：传入日期格式字符串
-* date.new(true)：返回 UTC time
-* date.new(false)：返回 local time
-* date.new(int_year, var_month, int_day, [num_hour], [num_min], [num_sec], [int_ticks])
+LuaDate v2.2
+Lua Date and Time module for Lua 5.x.
+https://tieske.github.io/date/
 
-## date.epoch()
-返回元年
+## date (...)
+创建日期时间对象
 
-## date.isleapyear(var_year)
-是否润年
+* date(): 不指定参数
+* date(num_time): 传入时间戳
+* date(tbl_date)：传入对象表达式
+* date(str_date)：传入日期格式字符串
+* date(true)：返回 UTC time
+* date(false)：返回 local time
+* date(int_year, var_month, int_day, [num_hour], [num_min], [num_sec], [int_ticks])
+
+```lua
+local a = date(2006, 8, 13)
+assert(a == date("Sun Aug 13 2006"))
+
+local b = date("Jun 13 1999")
+assert(b == date(1999, 6, 13))
+
+local c = date(1234483200)
+assert(c == date("Feb 13 2009"))
+
+local d = date {
+    year    = 2022,
+    month   = 10,
+    day     = 1,
+    hour    = 12,
+    min     = 30,
+    sec     = 0,
+}
+assert(d == date("2022-10-01 12:30:00"))
+
+local e = date()
+assert(e)
+```
+
+## date.isodate(int_year, int_week, int_wday)
+传入年，年的第几周，周的第几日创建日期对象
 
 ## date.diff(var_date1, var_date2)
 返回两个日期的差异对象
+```lua
+-- get the days between two dates
+d = date.diff("Jan 7 1563", date(1563, 1, 2))
+assert(d:spandays()==5)
+```
+
+## date.epoch()
+新纪元时间 Epoch 是以 1970-01-01 00:00:00 UTC 为标准的时间，
+将目标时间与 1970-01-01 00:00:00时间的差值以秒来计算。
+```lua
+assert(date.epoch()==date("jan 1 1970"))
+```
+
+## date.isleapyear(var_year)
+是否润年
+```lua
+d = date(1776, 1, 1)
+assert(date.isleapyear(d))
+assert(date.isleapyear(d:getyear()))
+assert(date.isleapyear(1776))
+```
+
+## date.getcenturyflip()
+返回全局设置 century_flip: 0 ~ 100 之间, 默认值为 0
+
+## date.setcenturyflip(century_flip)
+修改全局设置 century_flip: 0 ~ 100 之间
+
+```lua
+-- 两位数年将视为 19xx
+date.setcenturyflip(0)  -- 默认值
+assert(date("01-01-00")==date(1900,01,01))
+assert(date("01-01-50")==date(1950,01,01))
+assert(date("01-01-99")==date(1999,01,01))
+
+-- 两位数年将视为 20xx
+date.setcenturyflip(100)
+assert(date("01-01-00")==date(2000,01,01))
+assert(date("01-01-50")==date(2050,01,01))
+assert(date("01-01-99")==date(2099,01,01))
+
+-- 两位数年: 小于50将视为 20xx，大于或等于50将视为 19xx
+date.setcenturyflip(50)
+assert(date("01-01-00")==date(2000,01,01))
+assert(date("01-01-49")==date(2049,01,01))
+assert(date("01-01-50")==date(1950,01,01))
+assert(date("01-01-99")==date(1999,01,01))
+```
 
 ## spandays()
 返回相差天数
@@ -134,28 +210,31 @@
 取得微秒
 
 ## getdate()
-返回年，月，日
+取得年，月，日
 
 ## gettime()
-返回小时，分钟，秒，微秒
+取得小时，分钟，秒，微秒
 
 ## getyearday()
-取得一年的第几天
+取得年的第几天
 
 ## getweeknumber()
-取得一年的第几周
+取得年的第几周
 
 ## getweekday()
 取得星期几
 
+## getisodate()
+取得 ISO 年，年的第几周，周的第几日
+
 ## getisoyear()
-取得iso年
+取得 ISO 年
 
 ## getisoweeknumber()
-取得iso年的第几周
+取得 ISO 年的第几周
 
 ## getisoweekday()
-取得iso星期几
+取得 ISO 周的第几日
 
 ## getbias()
 取得时区
@@ -167,31 +246,31 @@
 返回秒数(含微秒数)
 
 ## setyear(int_year, var_month, int_mday)
-修改年
+修改年，月，日
 
 ## setmonth(var_month, int_mday)
-修改月
+修改月，日
 
 ## setday(int_mday)
 修改日
 
 ## sethours(num_hour, num_min, num_sec, num_ticks)
-修改小时
+修改小时，分钟，秒，微秒
 
 ## setminutes(num_min, num_sec, num_ticks)
-修改分钟
+修改分钟，秒，微秒
 
 ## setseconds(num_sec, num_ticks)
-修改秒
+修改秒，微秒
 
 ## setticks(num_ticks)
 修改微秒
 
 ## setisoyear(int_year, int_week, int_wday)
-修改iso年
+修改 ISO 年，年的第几周，周的第几日
 
 ## setisoweeknumber(int_week, int_wday)
-修改iso第几周
+修改 ISO 年的第几周，周的第几日
 
 ## setisoweekday(int_wday)
-修改iso星期几
+修改 ISO 周的第几日

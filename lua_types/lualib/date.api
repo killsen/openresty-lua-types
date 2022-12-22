@@ -1,24 +1,23 @@
 
--- LuaDate v2.1
--- https://github.com/iorichina/dateModuleForOpenresty
--- http://tieske.github.io/date/
+-- LuaDate v2.2
+-- Lua Date and Time module for Lua 5.x.
+-- https://tieske.github.io/date/
 
-require("resty.date")                                           -> date
-
+date
 date(...)                                                       -> dateObject
-date.new(...)                                                   -> dateObject
 
+date.isodate(y, m, d)                                           -> dateObject
+date.diff(var_date1, var_date2)                                 -> dateObject
 date.epoch()                                                    -> dateObject
 date.isleapyear(var_year)                                       -> boolean
-
-date.diff(var_date1, var_date2)                                 -> dateObject
+date.getcenturyflip()                                           -> number
+date.setcenturyflip(century_flip)
 
 dateObject:spandays()                                           -> number
 dateObject:spanhours()                                          -> number
 dateObject:spanminutes()                                        -> number
 dateObject:spanseconds()                                        -> number
 dateObject:spanticks()                                          -> number
-
 
 dateObject:copy()                                               -> dateObject
 dateObject:fmt(str_code)                                        -> string
@@ -48,6 +47,7 @@ dateObject:getyearday()                                         -> number
 dateObject:getweeknumber()                                      -> number
 dateObject:getweekday()                                         -> number
 
+dateObject:getisodate()                                         -> year, week_of_year, day_of_week
 dateObject:getisoyear()                                         -> number
 dateObject:getisoweeknumber()                                   -> number
 dateObject:getisoweekday()                                      -> number
