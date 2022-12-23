@@ -7,11 +7,9 @@ require("resty.http")                           -> http
 http.new()                                      -> httpc
 
 -- Connection
-httpc:connect(host, port, options_table?)                                   -> ok, err
-httpc:connect_proxy(proxy_uri, scheme, host, port, proxy_authorization)     -> ok, err
+httpc:connect(options)                                                      -> ok, err, ssl_session
 httpc:set_timeout(time)                                                     ->
 httpc:set_timeouts(connect_timeout, send_timeout, read_timeout)             ->
-httpc:ssl_handshake(session, host, verify)                                  -> session, err
 httpc:set_keepalive(max_idle_timeout, pool_size)                            -> ok, err
 httpc:set_proxy_options(opts)                                               ->
 httpc:get_reused_times()                                                    -> times, err
@@ -19,23 +17,25 @@ httpc:close()                                                               -> o
 
 -- Requesting
 httpc:request(params)               -> res, err
-httpc:request_uri(uri, params)      -> res, err
-httpc:request_pipeline(params)      -> responses, err
+httpc:request_pipeline(params)      -> res[], err
+httpc:request_uri(uri, params)      -> rex, err
 
 -- Response
-res.status
-res.reason
-res.headers
-res.has_body
-res.body_reader(bytes?)             -> chunk, err
-res:read_body()                     -> body, err
-res:read_trailers()                 ->
+res.status                                              -- The status code.
+res.reason                                              -- The status reason phrase.
+res.headers                                             -- A table of headers.
+res.has_body                                            -- A boolean flag indicating if there is a body to be read.
+res.body_reader(buffer_size)        -> chunk, err       -- An iterator function for reading the body in a streaming fashion.
+res:read_body()                     -> body, err        -- A method to read the entire body into a string.
+res:read_trailers()                 ->                  -- A method to merge any trailers underneath the headers, after reading the body.
 
--- Proxy
-httpc:proxy_request(request_body_chunk_size?) -> res, err
-httpc:proxy_response(res, chunksize?) ->
+rex.status                                              -- The status code.
+rex.reason                                              -- The status reason phrase.
+rex.headers                                             -- A table of headers.
+rex.has_body                                            -- A boolean flag indicating if there is a body to be read.
+rex.body                                                -- The entire response body as a string.
 
 -- Utility
-httpc:parse_uri(uri, query_in_path?)                -> { scheme, host, port, path, query }
+httpc:parse_uri(uri, query_in_path?)                -> scheme, host, port, path, query
 httpc:get_client_body_reader(chunksize?, sock?)     -> reader, err
-reader(bytes?)                                      -> chunk, err
+reader(buffer_size)                                 -> chunk, err
