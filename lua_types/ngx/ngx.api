@@ -1,11 +1,12 @@
 
 ngx
 
-ngx.null -- null
-ngx.arg  -- {}
-ngx.ctx  -- {}
+ngx.null
+ngx.arg
+ngx.ctx
 
 ngx.var
+ngx.var.*
 ngx.var.app_name
 ngx.var.act_type
 ngx.var.remote_addr             -- 客户端 IP 地址
@@ -88,7 +89,6 @@ ngx.headers_sent                   -- 应答头部是否已经被发送=
 ngx.print(...)                     -- 输出响应体(不带回车)
 ngx.say(...)                       -- 输出响应体(带上回车)
 
-ngx.log(log_level , ...)
 ngx.log(ngx.STDERR, ...)
 ngx.log(ngx.EMERG , ...)
 ngx.log(ngx.ALERT , ...)
@@ -98,6 +98,7 @@ ngx.log(ngx.WARN  , ...)
 ngx.log(ngx.NOTICE, ...)
 ngx.log(ngx.INFO  , ...)
 ngx.log(ngx.DEBUG , ...)
+ngx.log(log_level , ...)
 
 ngx.flush(wait=false?)             -- 向客户端刷新响应输出
 
@@ -144,11 +145,11 @@ ngx.re.gsub(subject, regex, replace, options?)
 ngx.shared                                          -- ngx.shared.DICT
 ngx.shared.*                                        -> DICT
 ngx.shared.my_cache                                 -> DICT
-ngx.shared.my_events                                -> DICT
-ngx.shared.my_index                                 -> DICT
 ngx.shared.my_locks                                 -> DICT
-ngx.shared.my_testing                               -> DICT
-ngx.shared.app_waf_limit                            -> DICT
+ngx.shared.my_miss                                  -> DICT
+ngx.shared.my_ipc                                   -> DICT
+ngx.shared.my_index                                 -> DICT
+ngx.shared.my_dns                                   -> DICT
 
     DICT                                            -- ngx.shared.DICT
     DICT:get(key)                                   -- ngx.shared.DICT.get
@@ -225,17 +226,68 @@ ngx.worker.pid()              -- 进程号
 ngx.worker.id()               -- 进程序号
 ngx.worker.count()            -- 进程数
 
-ngx.AGAIN                  -- = -2
-ngx.ALERT                  -- =  2
-ngx.CRIT                   -- =  3
-ngx.DEBUG                  -- =  8
-ngx.DECLINED               -- = -5
-ngx.DONE                   -- = -4
-ngx.EMERG                  -- =  1
-ngx.ERR                    -- =  4
-ngx.ERROR                  -- = -1
-ngx.INFO                   -- =  7
-ngx.NOTICE                 -- =  6
-ngx.OK                     -- =  0
-ngx.STDERR                 -- =  0
-ngx.WARN                   -- =  5
+ngx.AGAIN                       -> number -- -2
+ngx.ALERT                       -> number -- 2
+ngx.CRIT                        -> number -- 3
+ngx.DEBUG                       -> number -- 8
+ngx.DECLINED                    -> number -- -5
+ngx.DONE                        -> number -- -4
+ngx.EMERG                       -> number -- 1
+ngx.ERR                         -> number -- 4
+ngx.ERROR                       -> number -- -1
+ngx.INFO                        -> number -- 7
+ngx.NOTICE                      -> number -- 6
+ngx.OK                          -> number -- 0
+ngx.STDERR                      -> number -- 0
+ngx.WARN                        -> number -- 5
+
+ngx.HTTP_ACCEPTED               -> number -- 202
+ngx.HTTP_BAD_GATEWAY            -> number -- 502
+ngx.HTTP_BAD_REQUEST            -> number -- 400
+ngx.HTTP_CLOSE                  -> number -- 444
+ngx.HTTP_CONFLICT               -> number -- 409
+ngx.HTTP_CONTINUE               -> number -- 100
+ngx.HTTP_COPY                   -> number -- 128
+ngx.HTTP_CREATED                -> number -- 201
+ngx.HTTP_DELETE                 -> number -- 32
+ngx.HTTP_FORBIDDEN              -> number -- 403
+ngx.HTTP_GATEWAY_TIMEOUT        -> number -- 504
+ngx.HTTP_GET                    -> number -- 2
+ngx.HTTP_GONE                   -> number -- 410
+ngx.HTTP_HEAD                   -> number -- 4
+ngx.HTTP_ILLEGAL                -> number -- 451
+ngx.HTTP_INSUFFICIENT_STORAGE   -> number -- 507
+ngx.HTTP_INTERNAL_SERVER_ERROR  -> number -- 500
+ngx.HTTP_LOCK                   -> number -- 4096
+ngx.HTTP_METHOD_NOT_IMPLEMENTED -> number -- 501
+ngx.HTTP_MKCOL                  -> number -- 64
+ngx.HTTP_MOVE                   -> number -- 256
+ngx.HTTP_MOVED_PERMANENTLY      -> number -- 301
+ngx.HTTP_MOVED_TEMPORARILY      -> number -- 302
+ngx.HTTP_NOT_ACCEPTABLE         -> number -- 406
+ngx.HTTP_NOT_ALLOWED            -> number -- 405
+ngx.HTTP_NOT_FOUND              -> number -- 404
+ngx.HTTP_NOT_MODIFIED           -> number -- 304
+ngx.HTTP_NO_CONTENT             -> number -- 204
+ngx.HTTP_OK                     -> number -- 200
+ngx.HTTP_OPTIONS                -> number -- 512
+ngx.HTTP_PARTIAL_CONTENT        -> number -- 206
+ngx.HTTP_PATCH                  -> number -- 16384
+ngx.HTTP_PAYMENT_REQUIRED       -> number -- 402
+ngx.HTTP_PERMANENT_REDIRECT     -> number -- 308
+ngx.HTTP_POST                   -> number -- 8
+ngx.HTTP_PROPFIND               -> number -- 1024
+ngx.HTTP_PROPPATCH              -> number -- 2048
+ngx.HTTP_PUT                    -> number -- 16
+ngx.HTTP_REQUEST_TIMEOUT        -> number -- 408
+ngx.HTTP_SEE_OTHER              -> number -- 303
+ngx.HTTP_SERVICE_UNAVAILABLE    -> number -- 503
+ngx.HTTP_SPECIAL_RESPONSE       -> number -- 300
+ngx.HTTP_SWITCHING_PROTOCOLS    -> number -- 101
+ngx.HTTP_TEMPORARY_REDIRECT     -> number -- 307
+ngx.HTTP_TOO_MANY_REQUESTS      -> number -- 429
+ngx.HTTP_TRACE                  -> number -- 32768
+ngx.HTTP_UNAUTHORIZED           -> number -- 401
+ngx.HTTP_UNLOCK                 -> number -- 8192
+ngx.HTTP_UPGRADE_REQUIRED       -> number -- 426
+ngx.HTTP_VERSION_NOT_SUPPORTED  -> number -- 505
