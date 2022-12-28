@@ -3,7 +3,9 @@ ngx
 
 ngx.null
 ngx.arg
+
 ngx.ctx
+ngx.ctx.*
 
 ngx.var
 ngx.var.*
@@ -74,12 +76,7 @@ ngx.req.init_body(buffer_size?)                     -- 创建一个新的空请�
 ngx.req.append_body(data_chunk)                     -- 向已存在的请求体中追加写入数据块
 ngx.req.finish_body()                               -- 结束新请求体构造过程
 
-ngx.req.socket() -> req_socket
-
-    req_socket
-    req_socket:receive(size?)                       -- tcpsock:receive
-    req_socket:receive(pattern?)                    -- tcpsock:receive
-    req_socket:receiveuntil(pattern, options?)      -- tcpsock:receiveuntil
+ngx.req.socket() -> tcpsock
 
 ngx.exec(uri, args?)               -- 执行一个内部跳转
 ngx.redirect(uri, status=302?)     -- 重定向
