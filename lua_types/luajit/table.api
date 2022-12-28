@@ -1,5 +1,9 @@
 
 table
+
+table.new(narray, nhash)
+table.clear(t)
+
 table.concat(t[,sep[,i[,j]]])
 table.insert(t,[pos,]value)
 table.maxn(t)
