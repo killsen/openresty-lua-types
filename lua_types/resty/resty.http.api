@@ -2,7 +2,7 @@
 -- Lua HTTP client cosocket driver for OpenResty / ngx_lua.
 -- https://github.com/ledgetech/lua-resty-http
 
-require("resty.http")                           -> http
+http
 
 http.new()                                      -> httpc
 

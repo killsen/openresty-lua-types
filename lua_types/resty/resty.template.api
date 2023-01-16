@@ -2,9 +2,13 @@
 -- lua-resty-template is a compiling (1) (HTML) templating engine for Lua and OpenResty.
 -- https://github.com/bungle/lua-resty-template
 
-require("resty.template")                                               -> template
-
 template
+
+------------------------------------------------------------
+html                                            -> string
+code                                            -> string
+------------------------------------------------------------
+
 template.new(config)                                                    -> template
 
 template.render             (view, {context}, cache_key?, is_text?)     -- 输出网页到客户端

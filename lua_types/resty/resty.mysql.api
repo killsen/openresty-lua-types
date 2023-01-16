@@ -2,13 +2,23 @@
 -- Nonblocking Lua MySQL driver library for ngx_lua or OpenResty
 -- https://github.com/openresty/lua-resty-mysql
 
-require("resty.mysql")                          -> mysql
+mysql
+
+------------------------------------------------------------
+ok                                              -> boolean
+err                                             -> string
+res                                             -> any
+times                                           -> number
+bytes                                           -> number
+errcode                                         -> number
+sqlstate                                        -> string
+------------------------------------------------------------
 
 mysql:new()                                     -> db, err
 
 db:set_timeout(time)
 db:set_compact_arrays(boolean)
-db:server_ver()                                 -> str
+db:server_ver()                                 -> string
 db:set_keepalive(max_idle_timeout, pool_size)   -> ok, err
 db:get_reused_times()                           -> times, err
 
@@ -21,3 +31,10 @@ db:read_result()                                -> res, err, errcode, sqlstate
 db:read_result(nrows)                           -> res, err, errcode, sqlstate
 db:query(query)                                 -> res, err, errcode, sqlstate
 db:query(query, nrows)                          -> res, err, errcode, sqlstate
+
+res.*                   -> any                  -- 行数据
+res.affected_rows       -> number               -- 影响的记录行数
+res.insert_id           -> number               -- INSERT 查询中产生的 AUTO_INCREMENT 的 ID 号
+res.server_status       -> number               -- 服务器状态
+res.warning_count       -> number               -- 告警数目
+res.message             -> string               -- 服务器消息
