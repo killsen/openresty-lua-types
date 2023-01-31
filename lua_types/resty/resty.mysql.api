@@ -7,7 +7,6 @@ mysql
 ------------------------------------------------------------
 ok                                              -> boolean
 err                                             -> string
-res                                             -> any
 times                                           -> number
 bytes                                           -> number
 errcode                                         -> number
