@@ -6,34 +6,51 @@ mysql
 
 ------------------------------------------------------------
 ok                                              -> boolean
-err                                             -> string
-times                                           -> number
-bytes                                           -> number
+err                                             -> string?
 errcode                                         -> number
 sqlstate                                        -> string
 ------------------------------------------------------------
 
 mysql:new()                                     -> db, err
 
-db:set_timeout(time)
-db:set_compact_arrays(boolean)
+db
+db.state                                        -> number   -- 连接状态
+db.is_slave                                     -> boolean  -- 是否从库
+db.is_master                                    -> boolean  -- 是否主库
+db.__trans                                      -> boolean  -- 是否事务处理
+
+db:set_timeout(timeout: number)
+db:set_compact_arrays(nrows: boolean)
 db:server_ver()                                 -> string
-db:set_keepalive(max_idle_timeout, pool_size)   -> ok, err
-db:get_reused_times()                           -> times, err
+db:set_keepalive(max_idle_timeout: number, pool_size: number)   -> ok, err
+db:get_reused_times()                           -> number, err
 
 db:close()                                      -> ok, err
-db:send_query(query)                            -> bytes, err
+db:send_query(query)                            -> number, err
 
-db:connect(options)                             -> ok,  err, errcode, sqlstate
+DbOption                                        -- 数据库参数
+DbOption.host               -> string           -- 数据库主机
+DbOption.port               -> number           -- 数据库端口
+DbOption.database           -> string           -- 数据库名称
+DbOption.user               -> string           -- 数据库登录账户
+DbOption.password           -> string           -- 数据库登录密码
+DbOption.max_packet_size    -> number           -- 最大数据包大小
+DbOption.compact_arrays     -> boolean          -- 是否开启压缩模式
+DbOption.charset            -> string           -- 字符集
+DbOption.pool               -> string           -- 连接池名称
+DbOption.pool_size          -> number           -- 连接池大小
+DbOption.backlog            -> number           -- 连接池积压大小
+DbOption.ssl                -> boolean          -- 是否 ssl 连接
+DbOption.ssl_verify         -> boolean          -- 验证 ssl 连接
+DbOption.path               -> string           -- unix连接路径
 
-db:read_result()                                -> res, err, errcode, sqlstate
-db:read_result(nrows)                           -> res, err, errcode, sqlstate
-db:query(query)                                 -> res, err, errcode, sqlstate
-db:query(query, nrows)                          -> res, err, errcode, sqlstate
+db:connect(opt: DbOption)                       -> ok,  err, errcode, sqlstate
+db:read_result(nrows?: boolean)                 -> res, err, errcode, sqlstate
+db:query(query: string, nrows?: boolean)        -> res, err, errcode, sqlstate
 
-res.*                   -> any                  -- 行数据
-res.affected_rows       -> number               -- 影响的记录行数
-res.insert_id           -> number               -- INSERT 查询中产生的 AUTO_INCREMENT 的 ID 号
-res.server_status       -> number               -- 服务器状态
-res.warning_count       -> number               -- 告警数目
-res.message             -> string               -- 服务器消息
+res                         -> table[]          -- 行数据
+res.affected_rows           -> number           -- 影响的记录行数
+res.insert_id               -> number           -- INSERT 查询中产生的 AUTO_INCREMENT 的 ID 号
+res.server_status           -> number           -- 服务器状态
+res.warning_count           -> number           -- 告警数目
+res.message                 -> string           -- 服务器消息
