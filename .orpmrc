@@ -1,5 +1,5 @@
 ﻿{
-    "version":  "1.0.0",
+    "version":  "2.0.0",
     "license":  "MIT",
     "homepage":  "https://github.com/killsen/openresty-lua-types",
     "app_name":  "",
@@ -11,9 +11,9 @@
 
              },
     "devs":  {
-                 "killsen/openresty-appx":  "master",
+                 "killsen/openresty-appx":  "v2.0.0",
                  "killsen/openresty-lua-types":  "#",
-                 "killsen/openresty-clib":  "master",
+                 "killsen/openresty-clib":  "v2.0.0",
                  "killsen/lua-resty-ipdb-jit":  "v0.1.2",
                  "guosiu/lua-resty-zlib":  "master",
                  "guosiu/lua-resty-date":  "v2.2",
