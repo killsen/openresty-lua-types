@@ -4,38 +4,78 @@
 
 http
 
+------------------------------------------------------------
+ok                                              -> boolean
+err                                             -> string?
+chunk                                           -> string
+body                                            -> string
+------------------------------------------------------------
+
 http.new()                                      -> httpc
 
+ProxyOption
+ProxyOption.http_proxy                  -> string       -- an URI to a proxy server to be used with HTTP requests
+ProxyOption.http_proxy_authorization    -> string       -- a default Proxy-Authorization header value to be used with http_proxy, e.g. Basic ZGVtbzp0ZXN0, which will be overriden if the Proxy-Authorization request header is present.
+ProxyOption.https_proxy                 -> string       -- an URI to a proxy server to be used with HTTPS requests
+ProxyOption.https_proxy_authorization   -> string       -- as http_proxy_authorization but for use with https_proxy (since with HTTPS the authorisation is done when connecting, this one cannot be overridden by passing the Proxy-Authorization request header).
+ProxyOption.no_proxy                    -> string       -- a comma separated list of hosts that should not be proxied.
+
+ConnectOption
+ConnectOption.scheme                    -> string       -- scheme to use, or nil for unix domain socket
+ConnectOption.host                      -> string       -- target host, or path to a unix domain socket
+ConnectOption.port                      -> number       -- port on target host, will default to 80 or 443 based on the scheme
+ConnectOption.pool                      -> string       -- custom connection pool name.
+ConnectOption.pool_size                 -> number       -- custom connection pool size.
+ConnectOption.backlog                   -> number       -- custom connection backlog size.
+ConnectOption.proxy_opts                -> ProxyOption  -- sub-table, defaults to the global proxy options set, see set_proxy_options.
+ConnectOption.ssl_reused_session        -> userdata | boolean      -- a former SSL session userdata
+ConnectOption.ssl_verify                -> boolean      -- a Lua boolean value to control whether to perform SSL verification
+ConnectOption.ssl_server_name           -> string       -- used to validate the server name specified in the server certificate sent from the remote.
+ConnectOption.ssl_send_status_req       -> boolean      -- a boolean that controls whether to send the OCSP status request in the SSL handshake request (which is for requesting OCSP stapling).
+
+--- HttpOption : { url: string, method: string, body: string, query: string, headers: map<string> }
+--- HttpOption & { parts: @HttpPart[], ssl_server_name: string, ssl_verify: boolean }
+
 -- Connection
-httpc:connect(options)                                                      -> ok, err, ssl_session
-httpc:set_timeout(time)                                                     ->
-httpc:set_timeouts(connect_timeout, send_timeout, read_timeout)             ->
-httpc:set_keepalive(max_idle_timeout, pool_size)                            -> ok, err
-httpc:set_proxy_options(opts)                                               ->
+httpc:connect(opts: ConnectOption)                                          -> ok, err, ssl_session
+httpc:set_timeout(timeout: number)                                          -> void
+httpc:set_timeouts(connect: number, send: number, read: number)             -> void
+httpc:set_keepalive(max_idle_timeout: number, pool_size: number)            -> ok, err
+httpc:set_proxy_options(opts: ProxyOption)                                  -> void
 httpc:get_reused_times()                                                    -> times, err
 httpc:close()                                                               -> ok, err
 
+RequestOption
+RequestOption.keepalive             -> boolean  -- Set to false to disable keepalives and immediately close the connection. Defaults to true.
+RequestOption.keepalive_timeout     -> number   -- The maximal idle timeout (ms). Defaults to lua_socket_keepalive_timeout.
+RequestOption.keepalive_pool        -> number   -- The maximum number of connections in the pool. Defaults to lua_socket_pool_size.
+
+RequestParam                        -> RequestOption & ConnectOption
+
 -- Requesting
-httpc:request(params)               -> res, err
-httpc:request_pipeline(params)      -> res[], err
-httpc:request_uri(uri, params)      -> rex, err
+httpc:request(param: RequestParam)                      -> res, err
+httpc:request_pipeline(params: RequestParam[])          -> res[], err
+httpc:request_uri(uri: string, param?: RequestParam)    -> rex, err
 
 -- Response
-res.status                                              -- The status code.
-res.reason                                              -- The status reason phrase.
-res.headers                                             -- A table of headers.
-res.has_body                                            -- A boolean flag indicating if there is a body to be read.
+res                                                     -- Response
+res.status                          -> number           -- The status code.
+res.reason                          -> string           -- The status reason phrase.
+res.headers                         -> map<string>      -- A table of headers.
+res.has_body                        -> boolean          -- A boolean flag indicating if there is a body to be read.
 res.body_reader(buffer_size)        -> chunk, err       -- An iterator function for reading the body in a streaming fashion.
 res:read_body()                     -> body, err        -- A method to read the entire body into a string.
-res:read_trailers()                 ->                  -- A method to merge any trailers underneath the headers, after reading the body.
+res:read_trailers()                 -> void             -- A method to merge any trailers underneath the headers, after reading the body.
 
-rex.status                                              -- The status code.
-rex.reason                                              -- The status reason phrase.
-rex.headers                                             -- A table of headers.
-rex.has_body                                            -- A boolean flag indicating if there is a body to be read.
-rex.body                                                -- The entire response body as a string.
+rex                                                     -- Response
+rex.status                          -> number           -- The status code.
+rex.reason                          -> string           -- The status reason phrase.
+rex.headers                         -> map<string>      -- A table of headers.
+rex.has_body                        -> boolean          -- A boolean flag indicating if there is a body to be read.
+rex.body                            -> string           -- The entire response body as a string.
 
 -- Utility
-httpc:parse_uri(uri, query_in_path?)                -> scheme, host, port, path, query
-httpc:get_client_body_reader(chunksize?, sock?)     -> reader, err
-reader(buffer_size)                                 -> chunk, err
+httpc:parse_uri(uri: string, query_in_path?: boolean)       -> scheme: string, host: string, port: number, path: string, query: string
+httpc:get_client_body_reader(chunksize?: number, sock?)     -> reader, err
+
+reader(buffer_size: number)                                 -> chunk, err
