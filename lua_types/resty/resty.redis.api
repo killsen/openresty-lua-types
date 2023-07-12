@@ -1,0 +1,207 @@
+
+-- lua-resty-redis - Lua redis client driver for the ngx_lua based on the cosocket API
+-- https://github.com/openresty/lua-resty-redis
+
+-- Redis 教程
+-- https://www.runoob.com/redis/redis-tutorial.html
+
+redis
+
+-- redis._VERSION                              -> "0.30"
+-- redis.add_commands(command: string, ...)    -> void
+-- redis.register_module_prefix(mod: string)   -> void
+
+-- 返回 nil, err 网络问题
+-- 返回 false, err 参数问题
+-- 返回 null 数据不存在
+-- 返回 "OK" 或 数字 1 代表执行成功, 返回 0 代表执行失败
+-- 返回 number, string, table
+
+redis:new()                         -> red, err
+
+red:set_timeout(time: number)       -> void
+red:set_timeouts(connect_timeout: number, send_timeout: number, read_timeout: number)   -> void
+
+Option
+Option.ssl                          -> boolean  -- If set to true, then uses SSL to connect to redis (defaults to false).
+Option.ssl_verify                   -> boolean  -- If set to true, then verifies the validity of the server SSL certificate (defaults to false). Note that you need to configure the lua_ssl_trusted_certificate to specify the CA (or server) certificate used by your redis server. You may also need to configure lua_ssl_verify_depth accordingly.
+Option.server_name                  -> string   -- Specifies the server name for the new TLS extension Server Name Indication (SNI) when connecting over SSL.
+Option.pool                         -> string   -- Specifies a custom name for the connection pool being used. If omitted, then the connection pool name will be generated from the string template <host>:<port> or <unix-socket-path>
+Option.pool_size                    -> number   -- Specifies the size of the connection pool. If omitted and no backlog option was provided, no pool will be created. If omitted but backlog was provided, the pool will be created with a default size equal to the value of the lua_socket_pool_size directive. The connection pool holds up to pool_size alive connections ready to be reused by subsequent calls to connect, but note that there is no upper limit to the total number of opened connections outside of the pool. If you need to restrict the total number of opened connections, specify the backlog option. When the connection pool would exceed its size limit, the least recently used (kept-alive) connection already in the pool will be closed to make room for the current connection. Note that the cosocket connection pool is per Nginx worker process rather than per Nginx server instance, so the size limit specified here also applies to every single Nginx worker process. Also note that the size of the connection pool cannot be changed once it has been created. Note that at least ngx_lua 0.10.14 is required to use this options.
+Option.backlog                      -> number   -- If specified, this module will limit the total number of opened connections for this pool. No more connections than pool_size can be opened for this pool at any time. If the connection pool is full, subsequent connect operations will be queued into a queue equal to this option's value (the "backlog" queue). If the number of queued connect operations is equal to backlog, subsequent connect operations will fail and return nil plus the error string "too many waiting connect operations". The queued connect operations will be resumed once the number of connections in the pool is less than pool_size. The queued connect operation will abort once they have been queued for more than connect_timeout, controlled by set_timeout, and will return nil plus the error string "timeout". Note that at least ngx_lua 0.10.14 is required to use this options.
+
+red:connect(host: string, port_or_opt?: number | string | Option, opt?: Option)  -> ok?: number, err?: string
+red:set_keepalive(max_idle_timeout?: number, pool_size?: number)  -> ok?: number, err?: string
+red:get_reused_times()              -> times?: number, err?: string
+red:close()                         -> ok?: number, err?: string
+
+red:auth(password: string)          -> ok?: string, err?: string    -- Redis Auth 命令用于检测给定的密码和配置文件中的密码是否相符
+red:ping(message?: string)          -> res?: string, err?: string   -- Redis PING 命令用于检测 redis 服务是否启动
+
+red:init_pipeline(n?: number)       -> void
+red:commit_pipeline()               -> results, err?: string
+red:cancel_pipeline()               -> void
+
+red:hmset(key: string, f1_or_fields: string | map<string>, v1?: string, f2?: string, v2?: string, ...)  -> ok?: string, err?: string
+
+red:array_to_hash(array: any[])     -> hash: map<any>
+
+
+-- Redis 发布订阅
+-- https://www.runoob.com/redis/redis-pub-sub.html
+
+PubSubMsg
+PubSubMsg.1   -> string
+PubSubMsg.2   -> string
+PubSubMsg.3   -> number
+
+red:subscribe(channel: string, ...)             -> res?: PubSubMsg | PubSubMsg[], err?: string      -- 订阅给定的一个或多个频道的信息
+red:publish(channel: string, message: string)   -> res?: number, err?: string                       -- 将信息发送到指定的频道
+red:read_reply()                                -> res?: string[], err?: string                     -- 读取订阅消息
+red:unsubscribe(channel: string, ...)           -> res?: PubSubMsg | PubSubMsg[], err?: string      -- 指退订给定的频道
+
+red:psubscribe(pattern: string, ...)            -> res?: PubSubMsg | PubSubMsg[], err?: string      -- 订阅一个或多个符合给定模式的频道
+red:punsubscribe(pattern: string, ...)          -> res?: PubSubMsg | PubSubMsg[], err?: string      -- 退订所有给定模式的频道
+
+-- Redis 脚本
+-- https://www.runoob.com/redis/redis-scripting.html
+red:eval(script: string, numkeys: number, args: any, ...)   -> res?: any, err?: string  -- 执行 Lua 脚本
+red:evalsha(sha1: string, numkeys: number, args: any, ...)  -> res?: any, err?: string  -- 执行 Lua 脚本
+red:script(subcommand: string, args?: any, ...)             -> res?: any, err?: string   -- 执行 SCRIPT 命令
+
+-- Redis 键(key)
+-- https://www.runoob.com/redis/redis-keys.html
+
+red:del(key: string, ...)                               -> res?: number, err?: string               -- 该命令用于在 key 存在时删除 key
+red:dump(key: string, ...)                              -> res?: string, err?: string               -- 序列化给定 key, 并返回被序列化的值
+red:exists(key: string, ...)                            -> res?: number, err?: string               -- 检查给定 key 是否存在
+red:expire(key: string, seconds: number)                -> res?: number, err?: string               -- 为给定 key 设置过期时间, 以秒计
+red:expireat(key: string, timestamp: number)            -> res?: number, err?: string               -- EXPIREAT 的作用和 EXPIRE 类似，都用于为 key 设置过期时间。 不同在于 EXPIREAT 命令接受的时间参数是 UNIX 时间戳(unix timestamp)。
+red:pexpire(key: string, milliseconds: number)          -> res?: number, err?: string               -- 设置 key 的过期时间以毫秒计
+red:pexpireat(key: string, mstimestamp: number)         -> res?: number, err?: string               -- 设置 key 过期时间的时间戳(unix timestamp) 以毫秒计
+red:keys(pattern: string)                               -> res?: string[], err?: string             -- 查找所有符合给定模式(pattern)的 key
+red:move(key: string, db: string)                       -> res?: number, err?: string               -- 将当前数据库的 key 移动到给定的数据库 db 当中
+red:persist(key: string)                                -> res?: number, err?: string               -- 移除 key 的过期时间，key 将持久保持
+red:pttl(key: string)                                   -> res?: number, err?: string               -- 以毫秒为单位返回 key 的剩余的过期时间
+red:ttl(key: string)                                    -> res?: number, err?: string               -- 以秒为单位，返回给定 key 的剩余生存时间(TTL, time to live)
+red:randomkey()                                         -> res?: string, err?: string               -- 从当前数据库中随机返回一个 key
+red:rename(key: string, newkey: string)                 -> res?: string, err?: string               -- 仅当 newkey 不存在时，将 key 改名为 newkey
+red:scan(cursor: number, cursor: number, MATCH?: string, pattern?: string, COUNT?: string, count?: number) -> res?: string[], err?: string          -- 迭代数据库中的数据库键
+red:type(key: string)                                   -> res?: string, err?: string               -- 返回 key 所储存的值的类型
+
+-- Redis 字符串(String)
+-- https://www.runoob.com/redis/redis-strings.html
+red:set(key: string, val: string, EX|PX|NX|XX?: string, ex_sec_or_px_msec?: number, NX|XX?: string)  -> ok?: string, err?: string  -- 设置指定 key 的值
+red:get(key: string)                                    -> res?: string | null, err?: string        -- 获取指定 key 的值
+red:getrange(key: string, start: number, end: number)   -> res?: string, err?: string               -- 返回 key 中字符串值的子字符
+red:getset(key: string, val: string)                    -> res?: string | null, err?: string        -- 将给定 key 的值设为 val, 并返回 key 的旧值 old
+red:getbit(key: string, offset: number)                 -> res?: number, err?: string               -- 对 key 所储存的字符串值，获取指定偏移量上的位(bit)
+red:setbit(key: string, offset: number, bit: number)    -> res?: number, err?: string               -- 对 key 所储存的字符串值，设置或清除指定偏移量上的位(bit)
+red:setex(key: string, seconds: number, val: string)    -> res?: string, err?: string               -- 将值 val 关联到 key ，并将 key 的过期时间设为 seconds (以秒为单位)
+red:setnx(key: string, val: string)                     -> res?: number, err?: string               -- 将值 val 关联到 key ，并将 key 的过期时间设为 seconds (以秒为单位)
+red:setrange(key: string, offset: number, val: string)  -> res?: number, err?: string               -- 用 val 参数覆写给定 key 所储存的字符串值，从偏移量 offset 开始
+red:strlen(key: string)                                 -> res?: number, err?: string               -- 返回 key 所储存的字符串值的长度
+red:mget(key: string, string, ...)                      -> res?: (string | null)[], err?: string    -- 获取所有(一个或多个)给定 key 的值
+red:mset(key: string, val: string, ...)                 -> res?: string, err?: string               -- 同时设置一个或多个 key-value 对
+red:msetnx(key: string, val: string, ...)               -> res?: number, err?: string               -- 同时设置一个或多个 key-value 对，当且仅当所有给定 key 都不存在
+red:psetex(key: string, milliseconds: number, val: string)  -> res?: string, err?: string           -- 这个命令和 SETEX 命令相似，但它以毫秒为单位设置 key 的生存时间，而不是像 SETEX 命令那样，以秒为单位
+red:incr(key: string)                                   -> res?: number, err?: string               -- 将 key 中储存的数字值增一
+red:incrby(key: string, increment: number)              -> res?: number, err?: string               -- 将 key 所储存的值加上给定的增量值（increment）
+red:incrbyfloat(key: string, increment: number)         -> res?: number, err?: string               -- 将 key 所储存的值加上给定的浮点增量值（increment）
+red:decr(key: string)                                   -> res?: number, err?: string               -- 将 key 中储存的数字值减一
+red:decrby(key: string, decrement: number)              -> res?: number, err?: string               -- key 所储存的值减去给定的减量值（decrement）
+red:append(key: string, val: string)                    -> res?: string, err?: string               -- 如果 key 已经存在并且是一个字符串， APPEND 命令将指定的 value 追加到该 key 原来值（value）的末尾
+
+-- Redis 哈希(Hash)
+-- https://www.runoob.com/redis/redis-hashes.html
+red:hdel(key: string, field1: string, field2?: string, ...)  -> res?: number, err?: string          -- 删除一个或多个哈希表字段
+red:hexists(key: string, field: string, ...)            -> res?: number, err?: string               -- 查看哈希表 key 中，指定的字段是否存在
+red:hget(key: string, field: string, ...)               -> res?: string | null, err?: string        -- 获取存储在哈希表中指定字段的值
+red:hgetall(key: string)                                -> res?: string[], err?: string             -- 获取在哈希表中指定 key 的所有字段和值
+red:hincrby(key: string, field1: string, increment: number)  -> res?: number, err?: string          -- 为哈希表 key 中的指定字段的整数值加上增量 increment
+red:hincrbyfloat(key: string, field1: string, increment: number)  -> res?: number, err?: string     -- 为哈希表 key 中的指定字段的浮点数值加上增量 increment
+red:hkeys(key: string)                                  -> res?: string[], err?: string             -- 获取哈希表中的所有字段
+red:hlen(key: string)                                   -> res?: string[], err?: string             -- 获取哈希表中字段的数量
+red:hmget(key: string, field1: string, field2?: string, ...)  -> res?: string[], err?: string       -- 获取所有给定字段的值
+-- red:hmset(key: string, field: string, value: string, ...)  -> res?: string, err?: string         -- 同时将多个 field-value (域-值)对设置到哈希表 key 中
+red:hset(key: string, field: string, value: string)     -> res?: number, err?: string               -- 将哈希表 key 中的字段 field 的值设为 value
+red:hsetnx(key: string, field: string, value: string)   -> res?: number, err?: string               -- 只有在字段 field 不存在时，设置哈希表字段的值
+red:hvals(key: string)                                  -> res?: string[], err?: string             -- 获取哈希表中所有值
+red:hscan(key: string, cursor: number, MATCH?: string, pattern?: string, COUNT?: string, count?: number)  -> res?: (string | string[])[]  -- 迭代哈希表中的键值对
+
+-- Redis 列表(List)
+-- https://www.runoob.com/redis/redis-lists.html
+
+red:blpop(key1: string, keyn_or_timeout: string | number, ...)  -> res?: string[], err?: string     -- 移出并获取列表的第一个元素， 如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止
+red:brpop(key1: string, keyn_or_timeout: string | number, ...)  -> res?: string[], err?: string     -- 移出并获取列表的最后一个元素， 如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止
+red:brpoplpush(source: string, destination: string, timeout: number)  -> res?: string | null, err?: string  -- 从列表中弹出一个值，将弹出的元素插入到另外一个列表中并返回它； 如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止。
+red:lindex(key: string, index: number)                          -> res?: string | null, err?: string  -- 通过索引获取列表中的元素
+red:linsert(key: string, BEFORE_AFTER, pivot: number, value: string) -> res?: number, err?: string  -- 在列表的元素前或者后插入元素
+red:llen(key: string)                                           -> res?: number, err?: string       -- 获取列表长度
+red:lpop(key: string)                                           -> res?: string, err?: string       -- 移出并获取列表的第一个元素
+red:lpush(key: string, value1: string, value2?: string, ...)    -> res?: number, err?: string       -- 将一个或多个值插入到列表头部
+red:lpushx(key: string, value: string)                          -> res?: number, err?: string       -- 将一个值插入到已存在的列表头部
+red:lrange(key: string, start: number, stop: number)            -> res?: string[], err?: string     -- 获取列表指定范围内的元素
+red:lrem(key: string, count: number, value: string)             -> res?: number, err?: string       -- 移除列表元素
+red:lset(key: string, index: number, value: string)             -> ok?: string, err?: string        -- 通过索引设置列表元素的值
+red:ltirm(key: string, start: number, stop: number)             -> ok?: string, err?: string        -- 对一个列表进行修剪(trim)，就是说，让列表只保留指定区间内的元素，不在指定区间之内的元素都将被删除。
+red:rpop(key: string)                                           -> res?: string | null, err?: string  -- 移除列表的最后一个元素，返回值为移除的元素。
+red:rpoplpush(source: string, destination: string)              -> res?: string | null, err?: string  -- 移除列表的最后一个元素，并将该元素添加到另一个列表并返回
+red:rpush(key: string, value1: string, value2?: string, ...)    -> res?: number, err?: string       -- 在列表中添加一个或多个值到列表尾部
+red:rpushx(key: string, value: string)                          -> res?: number, err?: string       -- 为已存在的列表添加值
+
+-- Redis 集合(Set)
+-- https://www.runoob.com/redis/redis-sets.html
+
+red:sadd(key: string, member: string, ...)                      -> res?: number, err?: string       -- 向集合添加一个或多个成员
+red:scard(key: string)                                          -> res?: number, err?: string       -- 获取集合的成员数
+red:sdiff(key1: string, key2?: string, ...)                     -> res?: string[], err?: string     -- 返回第一个集合与其他集合之间的差异。
+red:sdiffstore(destination: string, key1: string, key2?: string, ...) -> res?: number, err?: string -- 返回给定所有集合的差集并存储在 destination 中
+red:sinter(key1: string, key2?: string, ...)                    -> res?: string[], err?: string     -- 返回给定所有集合的交集
+red:sinterstore(destination: string, key1: string, key2?: string, ...) -> res?: number, err?: string -- 返回给定所有集合的交集并存储在 destination 中
+red:sismember(key: string, member: string)                      -> res?: number, err?: string       -- 判断 member 元素是否是集合 key 的成员
+red:smembers(key: string)                                       -> res?: string[], err?: string     -- 返回集合中的所有成员
+red:smove(source: string, destination: string, member: string)  -> res?: string[], err?: string     -- 将 member 元素从 source 集合移动到 destination 集合
+red:spop(key: string)                                           -> res: string | null, err?: string -- 移除并返回集合中的一个随机元素
+red:srandmember(key: string, count?: number)  -> res: string | string[] | null, err?: string        -- 返回集合中一个或多个随机数
+red:srem(key: string, member: string, ...)                      -> res?: number, err?: string       -- 移除集合中一个或多个成员
+red:sunion(key1: string, key2?: string, ...)           -> res?: string[] | null, err?: string       -- 返回所有给定集合的并集
+red:sunionstore(destination: string, key1: string, key2?: string, ...) -> res?: number, err?: string -- 所有给定集合的并集存储在 destination 集合中
+red:sscan(key: string, cursor: number, MATCH?: string, pattern?: string, COUNT?: string, count?: number)  -> res?: (string | string[])[]  -- 迭代集合中的元素
+
+-- Redis 有序集合(sorted set)
+-- https://www.runoob.com/redis/redis-sorted-sets.html
+
+red:zadd(key: string, [NX|XX] [CH] [INCR] score: number, member: string, ...)   -> res?: number, err?: string  -- 向有序集合添加一个或多个成员，或者更新已存在成员的分数
+red:zcard(key: string)                                          -> res?: number, err?: string       -- 获取有序集合的成员数
+red:zcount(key: string, min: number, max: number)               -> res?: number, err?: string       -- 计算在有序集合中指定区间分数的成员数
+red:zincrby(key: string, increment: number, member: string)     -> res?: string, err?: string       -- 有序集合中对指定成员的分数加上增量 increment
+red:zinterstore(destination: string, numkeys: number, key: string, ...)  -> res?: number, err?: string  -- 计算给定的一个或多个有序集的交集并将结果集存储在新的有序集合 destination 中 increment
+red:zlexcount(key: string, min: number, max: number)  -> res?: number, err?: string                 -- 在有序集合中计算指定字典区间内成员数量
+red:zrange(key: string, start: number, stop: number, WITHSCORES: string)  -> res?: string[], err?: string  -- 通过索引区间返回有序集合指定区间内的成员
+red:zrangebylex(key: string, min: number, max: number, [LIMIT offset count])  -> res?: string[], err?: string  -- 通过字典区间返回有序集合的成员
+red:zrangebyscore(key: string, min: number, max: number, [WITHSCORES] [LIMIT offset count])  -> res?: string[], err?: string  -- 通过分数返回有序集合指定区间内的成员
+red:zrank(key: string, member: string)                          -> res?: number, err?: string       -- 返回有序集合中指定成员的索引
+red:zrem(key: string, member: string, ...)                      -> res?: number, err?: string       -- 移除有序集合中的一个或多个成员
+red:zremrangebylex(key: string, min: number, max: number)       -> res?: number, err?: string       -- 移除有序集合中给定的字典区间的所有成员
+red:zremrangebyrank(key: string, start: number, stop: number)   -> res?: number, err?: string       -- 移除有序集合中给定的排名区间的所有成员
+red:zremrangebyscore(key: string, min: number, max: number)     -> res?: number, err?: string       -- 移除有序集合中给定的分数区间的所有成员
+red:zrevrange(key: string, start: number, stop: number, [WITHSCORES])       -> res?: string[], err?: string  -- 返回有序集中指定区间内的成员，通过索引，分数从高到低
+red:zrevrangebyscore(key: string, max: number, min: number, [WITHSCORES])   -> res?: string[], err?: string  -- 返回有序集中指定分数区间内的成员，分数从高到低排序
+red:zrevrank(key: string, member: string)                       -> res?: string[], err?: string     -- 返回有序集合中指定成员的排名，有序集成员按分数值递减(从大到小)排序
+red:zscore(key: string, member: string)                         -> res?: string[], err?: string     -- 返回有序集中，成员的分数值
+red:zunionstore(destination: string, numkeys: number, key: string, ...)     -> res?: string[], err?: string  -- 计算给定的一个或多个有序集的并集，并存储在新的 key 中
+red:zscan(key: string, cursor: number, [MATCH pattern] [COUNT count])       -> res?: (string | string[])[]   -- 迭代有序集合中的元素（包括元素成员和元素分值）
+
+-- Redis HyperLogLog
+-- https://www.runoob.com/redis/redis-hyperloglog.html
+
+red:pfadd(key: string, element: string | number, ...)   -> res?: number, err?: string   -- 添加指定元素到 HyperLogLog 中
+red:pfcount(key: string, ...)                           -> res?: number, err?: string   -- 返回给定 HyperLogLog 的基数估算值
+red:pfmerge(destkey: string, sourcekey: string, ...)    -> ok?: string, err?: string    -- 将多个 HyperLogLog 合并为一个 HyperLogLog
+
+-- Redis 数据备份与恢复
+-- https://www.runoob.com/redis/redis-backup.html
+
+red:save()      -> res?: string, err?: string   -- Redis SAVE 命令用于创建当前数据库的备份
+red:bgsave()    -> res?: string, err?: string   -- 创建 redis 备份文件也可以使用命令 BGSAVE，该命令在后台执行
