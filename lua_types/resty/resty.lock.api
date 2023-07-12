@@ -4,14 +4,15 @@
 
 lock
 
-------------------------------------------------------------
-ok                                              -> boolean
-err                                             -> string
-elapsed                                         -> number
-------------------------------------------------------------
+LockOption
+LockOption.exptime      -> number   -- Specifies expiration time (in seconds) for the lock entry in the shared memory dictionary. You can specify up to 0.001 seconds. Default to 30 (seconds). Even if the invoker does not call unlock or the object holding the lock is not GC'd, the lock will be released after this time. So deadlock won't happen even when the worker process holding the lock crashes.
+LockOption.timeout      -> number   -- Specifies the maximal waiting time (in seconds) for the lock method calls on the current object instance. You can specify up to 0.001 seconds. Default to 5 (seconds). This option value cannot be bigger than exptime. This timeout is to prevent a lock method call from waiting forever. You can specify 0 to make the lock method return immediately without waiting if it cannot acquire the lock right away.
+LockOption.step         -> number   -- Specifies the initial step (in seconds) of sleeping when waiting for the lock. Default to 0.001 (seconds). When the lock method is waiting on a busy lock, it sleeps by steps. The step size is increased by a ratio (specified by the ratio option) until reaching the step size limit (specified by the max_step option).
+LockOption.ratio        -> number   -- Specifies the step increasing ratio. Default to 2, that is, the step size doubles at each waiting iteration.
+LockOption.max_step     -> number   -- Specifies the maximal step size (i.e., sleep interval, in seconds) allowed. See also the step and ratio options). Default to 0.5 (seconds).
 
-lock:new(dict_name, opts?)                      -> obj, err
+lock:new(dict_name: string, opts?: LockOption)  -> obj, err?: string
 
-obj:lock(key)                                   -> elapsed, err
-obj:unlock()                                    -> ok, err
-obj:expire(timeout)                             -> ok, err
+obj:lock(key: string)           -> elapsed?: number, err?: string
+obj:unlock()                    -> ok?: number, err?: string
+obj:expire(timeout?: number)    -> ok?: boolean, err?: string
