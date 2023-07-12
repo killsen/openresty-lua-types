@@ -9,22 +9,22 @@ html                                            -> string
 code                                            -> string
 ------------------------------------------------------------
 
-template.new(config: { root: string } | { location: string } | boolean)  -> template
+template.new(config)                                                    -> template
 
-template.render             (view: string, context: table, cache_key?: string, is_text?: boolean)   -- 输出网页到客户端
-template.render_file        (file: string, context: table, cache_key?: string)                      -- 输出网页到客户端
-template.render_string      (text: string, context: table, cache_key?: string)                      -- 输出网页到客户端
+template.render             (view, {context}, cache_key?, is_text?)     -- 输出网页到客户端
+template.render_file        (file, {context}, cache_key?)               -- 输出网页到客户端
+template.render_string      (text, {context}, cache_key?)               -- 输出网页到客户端
 
-template.compile            (view: string, cache_key?: string, is_text?: boolean)   -> render
-template.compile_file       (file: string, cache_key?: string)                      -> render
-template.compile_string     (text: string, cache_key?: string)                      -> render
+template.compile            (view, cache_key?, is_text?)                -> render
+template.compile_file       (file, cache_key?)                          -> render
+template.compile_string     (text, cache_key?)                          -> render
 
-render(context: table)      -> html  -- 返回网页内容
+render({context})                                                       -> html -- 返回网页内容
 
-template.process            (view: string, context: table, cache_key?: string, is_text?: boolean)   -> html  -- 返回网页内容
-template.process_file       (file: string, context: table, cache_key?: string)                      -> html  -- 返回网页内容
-template.process_string     (text: string, context: table, cache_key?: string)                      -> html  -- 返回网页内容
+template.process            (view, {context}, cache_key?, is_text?)     -> html -- 返回网页内容
+template.process_file       (file, {context}, cache_key?)               -> html -- 返回网页内容
+template.process_string     (text, {context}, cache_key?)               -> html -- 返回网页内容
 
-template.parse              (view: string, is_text: boolean)    -> code  -- 生成LUA代码
-template.parse_file         (file: string)                      -> code  -- 生成LUA代码
-template.parse_string       (text: string)                      -> code  -- 生成LUA代码
+template.parse              (view, is_text)                             -> code -- 生成LUA代码
+template.parse_file         (file)                                      -> code -- 生成LUA代码
+template.parse_string       (text)                                      -> code -- 生成LUA代码

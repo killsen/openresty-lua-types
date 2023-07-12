@@ -1,5 +1,4 @@
-## template
-
+## template.template
 [lua-resty-template](https://github.com/bungle/lua-resty-template)
 是Lua和OpenResty中的模板渲染引擎。由Kong网关核心工程师bungle开源。
 
@@ -15,7 +14,7 @@
 * `{-verbatim-}...{-verbatim-}`/`{-raw-}...{-raw-}`：可原样输出模板语法
 * `{# comments  #}`：在模板中使用注释，不会被执行和输出
 
-从模板中，您可以访问context表中的所有内容，以及template表中的所有内容。
+从模板中，您可以访问context表中的所有内容，以及template表中的所有内容。在模板，您还可以访问context，并template通过在前面键
 
 ## template.new(config)
 根据配置config，创建新环境下的template对象
@@ -42,7 +41,7 @@ local render = template.compile("template.html")   -- or
 local render = template.compile([[<h1>{{message}}</h1>]])
 
 local html = render { message = "Hello, World!" }
-ngx.print(html)
+print(html)
 
 -- 将输出：
 -- <h1>Hello, World!</h1>
@@ -57,7 +56,7 @@ ngx.print(html)
 -- 如果文件不存在，将抛出错误
 local render = template.compile_file("template.html")
 local html = render { message = "Hello, World!" }
-ngx.print(html)
+print(html)
 
 -- 如果文件内容是<h1>{{message}}</h1>，将输出：
 -- <h1>Hello, World!</h1>
@@ -71,7 +70,7 @@ ngx.print(html)
 
 local render = template.compile_string([[<h1>{{message}}</h1>]])
 local html = render { message = "Hello, World!" }
-ngx.print(html)
+print(html)
 
 -- 将输出：
 -- <h1>Hello, World!</h1>
@@ -87,7 +86,7 @@ local render = template.compile("template.html")          -- or
 local render = template.compile([[<h1>{{message}}</h1>]])
 
 local html = render { message = "Hello, World!" }
-ngx.print(html)
+print(html)
 
 -- 将输出：
 -- <h1>Hello, World!</h1>
@@ -148,7 +147,7 @@ local context = { message = "Hello, World!" }
 local html = template.process("template.html", context)   -- or
 local html = template.process([[<h1>{{message}}</h1>]], context)
 
-ngx.print(html)
+print(html)
 
 -- 将输出：
 -- <h1>Hello, World!</h1>
@@ -166,7 +165,7 @@ local html = template.process_file(
     { message = "Hello, World!" }
 )
 
-ngx.print(html)
+print(html)
 
 -- 将输出：
 -- <h1>Hello, World!</h1>
@@ -184,7 +183,7 @@ local html = template.process_string(
     { message = "Hello, World!" }
 )
 
-ngx.print(html)
+print(html)
 
 -- 将输出：
 -- <h1>Hello, World!</h1>
@@ -200,7 +199,7 @@ local lua_code = template.parse("template.html")   -- or
 local lua_code = template.parse([[<h1>{{message}}</h1>]])
 
 -- 输出 lua 代码
-ngx.print(lua_code)
+print(lua_code)
 
 ```
 
@@ -213,7 +212,7 @@ ngx.print(lua_code)
 local lua_code = template.parse_file("template.html")
 
 -- 输出 lua 代码
-ngx.print(lua_code)
+print(lua_code)
 
 ```
 
@@ -225,6 +224,6 @@ ngx.print(lua_code)
 local lua_code = template.parse_string([[<h1>{{message}}</h1>]])
 
 -- 输出 lua 代码
-ngx.print(lua_code)
+print(lua_code)
 
 ```
