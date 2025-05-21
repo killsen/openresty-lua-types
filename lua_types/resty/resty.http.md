@@ -19,27 +19,48 @@ Production ready.
 * Request pipelining
 * Trailers
 * HTTP proxy connections
+* mTLS (requires `ngx_lua_http_module` >= v0.10.23)
 
 
 ## API
 
-* [new](#new)
-* [connect](#connect)
-* [set_proxy_options](#set_proxy_options)
-* [set_timeout](#set_timeout)
-* [set_timeouts](#set_timeouts)
-* [set_keepalive](#set_keepalive)
-* [get_reused_times](#get_reused_times)
-* [close](#close)
-* [request](#request)
-* [request_uri](#request_uri)
-* [request_pipeline](#request_pipeline)
-* [parse_uri](#parse_uri)
-* [get_client_body_reader](#get_client_body_reader)
-* [Response](#response)
-    * [body_reader](#resbody_reader)
-    * [read_body](#resread_body)
-    * [read_trailers](#resread_trailers)
+- [lua-resty-http](#lua-resty-http)
+  - [Status](#status)
+  - [Features](#features)
+  - [API](#api)
+    - [Deprecated](#deprecated)
+  - [Usage](#usage)
+    - [Single-shot request](#single-shot-request)
+    - [Streamed request](#streamed-request)
+- [Connection](#connection)
+  - [new](#new)
+  - [connect](#connect)
+  - [set\_timeout](#set_timeout)
+  - [set\_timeouts](#set_timeouts)
+  - [set\_keepalive](#set_keepalive)
+  - [set\_proxy\_options](#set_proxy_options)
+  - [get\_reused\_times](#get_reused_times)
+  - [close](#close)
+- [Requesting](#requesting)
+  - [request](#request)
+  - [request\_uri](#request_uri)
+  - [request\_pipeline](#request_pipeline)
+- [Response](#response)
+  - [res.body\_reader](#resbody_reader)
+  - [res:read\_body](#resread_body)
+  - [res:read\_trailers](#resread_trailers)
+- [Utility](#utility)
+  - [parse\_uri](#parse_uri)
+  - [get\_client\_body\_reader](#get_client_body_reader)
+- [Deprecated](#deprecated-1)
+    - [TCP only connect](#tcp-only-connect)
+  - [connect\_proxy](#connect_proxy)
+  - [ssl\_handshake](#ssl_handshake)
+  - [proxy\_request / proxy\_response](#proxy_request--proxy_response)
+    - [proxy\_request](#proxy_request)
+    - [proxy\_response](#proxy_response)
+- [Author](#author)
+- [Licence](#licence)
 
 ### Deprecated
 
@@ -176,6 +197,8 @@ The options table has the following fields:
 * `ssl_verify`: option as per [OpenResty docs](https://github.com/openresty/lua-nginx-module#tcpsocksslhandshake), except that it defaults to `true`.
 * `ssl_server_name`: option as per [OpenResty docs](https://github.com/openresty/lua-nginx-module#tcpsocksslhandshake)
 * `ssl_send_status_req`: option as per [OpenResty docs](https://github.com/openresty/lua-nginx-module#tcpsocksslhandshake)
+* `ssl_client_cert`: will be passed to `tcpsock:setclientcert`. Requires `ngx_lua_http_module` >= v0.10.23.
+* `ssl_client_priv_key`: as above.
 
 ## set_timeout
 
